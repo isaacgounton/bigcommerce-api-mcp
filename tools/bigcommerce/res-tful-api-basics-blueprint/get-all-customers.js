@@ -3,15 +3,24 @@
  *
  * @param {Object} args - Arguments for the request.
  * @param {string} args.store_Hash - The store hash to include in the URL.
+ * @param {string} [args.id] - Filter by customer IDs (comma-separated).
  * @param {string} [args.email] - Filter by customer email address.
- * @param {string} [args.name] - Filter by customer name (first or last name).
+ * @param {string} [args.name] - Filter by customer name (exact match).
+ * @param {string} [args.name_like] - Filter by customer name (partial match).
  * @param {string} [args.company] - Filter by company name.
  * @param {string} [args.phone] - Filter by phone number.
  * @param {string} [args.customer_group_id] - Filter by customer group ID.
+ * @param {string} [args.registration_ip_address] - Filter by registration IP address.
+ * @param {string} [args.date_created] - Filter by exact customer creation date.
+ * @param {string} [args.date_created_min] - Filter customers created after this date.
+ * @param {string} [args.date_created_max] - Filter customers created before this date.
+ * @param {string} [args.date_modified] - Filter by exact customer modification date.
+ * @param {string} [args.date_modified_min] - Filter customers modified after this date.
+ * @param {string} [args.date_modified_max] - Filter customers modified before this date.
+ * @param {string} [args.sort] - Sort field and direction (e.g., 'date_created:desc').
+ * @param {string} [args.include] - Include additional resources (addresses, storecredit, attributes).
  * @param {number} [args.limit] - Number of results to return (max 250, default 50).
  * @param {number} [args.page] - Page number for pagination (default 1).
- * @param {string} [args.date_created] - Filter by customer creation date.
- * @param {string} [args.date_modified] - Filter by customer modification date.
  * @returns {Promise<Object>} - The result of the API call to get all customers.
  */
 import dotenv from 'dotenv';
@@ -21,15 +30,24 @@ dotenv.config();
 
 const executeFunction = async ({ 
   store_Hash, 
+  id,
   email, 
-  name, 
+  name,
+  name_like, 
   company, 
   phone, 
-  customer_group_id, 
-  limit = 50, 
-  page = 1,
+  customer_group_id,
+  registration_ip_address,
   date_created,
-  date_modified 
+  date_created_min,
+  date_created_max,
+  date_modified,
+  date_modified_min,
+  date_modified_max,
+  sort,
+  include,
+  limit = 50, 
+  page = 1
 }) => {
   const baseUrl = 'https://api.bigcommerce.com/stores';
   const token = process.env.BIGCOMMERCE_API_KEY;
@@ -42,13 +60,22 @@ const executeFunction = async ({
     const queryParams = new URLSearchParams();
     
     // Add filtering parameters (using BigCommerce v3 Customers API syntax)
+    if (id) queryParams.append('id:in', id);
     if (email) queryParams.append('email:in', email);
-    if (name) queryParams.append('name:like', name);
+    if (name) queryParams.append('name:in', name);
+    if (name_like) queryParams.append('name:like', name_like);
     if (company) queryParams.append('company:in', company);
     if (phone) queryParams.append('phone:in', phone);
     if (customer_group_id) queryParams.append('customer_group_id:in', customer_group_id.toString());
-    if (date_created) queryParams.append('date_created:min', date_created);
-    if (date_modified) queryParams.append('date_modified:min', date_modified);
+    if (registration_ip_address) queryParams.append('registration_ip_address:in', registration_ip_address);
+    if (date_created) queryParams.append('date_created', date_created);
+    if (date_created_min) queryParams.append('date_created:min', date_created_min);
+    if (date_created_max) queryParams.append('date_created:max', date_created_max);
+    if (date_modified) queryParams.append('date_modified', date_modified);
+    if (date_modified_min) queryParams.append('date_modified:min', date_modified_min);
+    if (date_modified_max) queryParams.append('date_modified:max', date_modified_max);
+    if (sort) queryParams.append('sort', sort);
+    if (include) queryParams.append('include', include);
     if (limit) queryParams.append('limit', limit.toString());
     if (page) queryParams.append('page', page.toString());
     
@@ -126,13 +153,21 @@ const apiTool = {
             type: 'string',
             description: 'The store hash to include in the URL.'
           },
+          id: {
+            type: 'string',
+            description: 'Filter by customer IDs (comma-separated for multiple IDs, e.g., "1,2,3").'
+          },
           email: {
             type: 'string',
             description: 'Filter by customer email address (exact match).'
           },
           name: {
             type: 'string',
-            description: 'Filter by customer name (first or last name, partial match supported).'
+            description: 'Filter by customer full name (exact match).'
+          },
+          name_like: {
+            type: 'string',
+            description: 'Filter by customer name using partial match (substring search).'
           },
           company: {
             type: 'string',
@@ -143,8 +178,44 @@ const apiTool = {
             description: 'Filter by phone number (exact match).'
           },
           customer_group_id: {
-            type: 'integer',
-            description: 'Filter by customer group ID.'
+            type: 'string',
+            description: 'Filter by customer group ID (comma-separated for multiple groups).'
+          },
+          registration_ip_address: {
+            type: 'string',
+            description: 'Filter by registration IP address (exact match).'
+          },
+          date_created: {
+            type: 'string',
+            description: 'Filter by exact customer creation date (ISO format: YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS).'
+          },
+          date_created_min: {
+            type: 'string',
+            description: 'Filter customers created after this date (ISO format: YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS).'
+          },
+          date_created_max: {
+            type: 'string',
+            description: 'Filter customers created before this date (ISO format: YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS).'
+          },
+          date_modified: {
+            type: 'string',
+            description: 'Filter by exact customer modification date (ISO format: YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS).'
+          },
+          date_modified_min: {
+            type: 'string',
+            description: 'Filter customers modified after this date (ISO format: YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS).'
+          },
+          date_modified_max: {
+            type: 'string',
+            description: 'Filter customers modified before this date (ISO format: YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS).'
+          },
+          sort: {
+            type: 'string',
+            description: 'Sort field and direction (e.g., "date_created:desc", "last_name:asc", "date_modified:desc").'
+          },
+          include: {
+            type: 'string',
+            description: 'Include additional customer sub-resources (comma-separated: addresses, storecredit, attributes, formfields).'
           },
           limit: {
             type: 'integer',
@@ -153,14 +224,6 @@ const apiTool = {
           page: {
             type: 'integer',
             description: 'Page number for pagination (default 1).'
-          },
-          date_created: {
-            type: 'string',
-            description: 'Filter customers created after this date (ISO format: YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS).'
-          },
-          date_modified: {
-            type: 'string',
-            description: 'Filter customers modified after this date (ISO format: YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS).'
           }
         },
         required: ['store_Hash']

@@ -8,6 +8,17 @@
  * @param {number} [args.status_id] - Filter orders by status ID.
  * @param {number} [args.min_id] - Minimum order ID.
  * @param {number} [args.max_id] - Maximum order ID.
+ * @param {number} [args.min_total] - Minimum order total amount.
+ * @param {number} [args.max_total] - Maximum order total amount.
+ * @param {string} [args.min_date_created] - Minimum date created (ISO 8601 format).
+ * @param {string} [args.max_date_created] - Maximum date created (ISO 8601 format).
+ * @param {string} [args.min_date_modified] - Minimum date modified (ISO 8601 format).
+ * @param {string} [args.max_date_modified] - Maximum date modified (ISO 8601 format).
+ * @param {number} [args.channel_id] - Filter by channel ID.
+ * @param {string} [args.payment_method] - Filter by payment method.
+ * @param {string} [args.cart_id] - Filter by cart ID.
+ * @param {string} [args.external_order_id] - Filter by external order ID.
+ * @param {string} [args.sort] - Sort field and direction (e.g., 'date_created:desc').
  * @param {number} [args.limit] - Number of results to return (default: 50).
  * @param {number} [args.page] - Page to return (default: 1).
  * @returns {Promise<Object>} - The result of the API call.
@@ -24,6 +35,17 @@ const executeFunction = async ({
   status_id, 
   min_id, 
   max_id, 
+  min_total,
+  max_total,
+  min_date_created,
+  max_date_created,
+  min_date_modified,
+  max_date_modified,
+  channel_id,
+  payment_method,
+  cart_id,
+  external_order_id,
+  sort,
   limit = 50, 
   page = 1 
 }) => {
@@ -42,6 +64,17 @@ const executeFunction = async ({
     if (status_id) queryParams.append('status_id', status_id.toString());
     if (min_id) queryParams.append('min_id', min_id.toString());
     if (max_id) queryParams.append('max_id', max_id.toString());
+    if (min_total) queryParams.append('min_total', min_total.toString());
+    if (max_total) queryParams.append('max_total', max_total.toString());
+    if (min_date_created) queryParams.append('min_date_created', min_date_created);
+    if (max_date_created) queryParams.append('max_date_created', max_date_created);
+    if (min_date_modified) queryParams.append('min_date_modified', min_date_modified);
+    if (max_date_modified) queryParams.append('max_date_modified', max_date_modified);
+    if (channel_id) queryParams.append('channel_id', channel_id.toString());
+    if (payment_method) queryParams.append('payment_method', payment_method);
+    if (cart_id) queryParams.append('cart_id', cart_id);
+    if (external_order_id) queryParams.append('external_order_id', external_order_id);
+    if (sort) queryParams.append('sort', sort);
     if (limit) queryParams.append('limit', limit.toString());
     if (page) queryParams.append('page', page.toString());
     
@@ -115,6 +148,50 @@ const apiTool = {
           max_id: {
             type: 'integer',
             description: 'Maximum order ID for filtering.'
+          },
+          min_total: {
+            type: 'number',
+            description: 'Minimum order total amount for filtering.'
+          },
+          max_total: {
+            type: 'number',
+            description: 'Maximum order total amount for filtering.'
+          },
+          min_date_created: {
+            type: 'string',
+            description: 'Minimum date created for filtering (ISO 8601 format, e.g., 2023-01-01T00:00:00Z).'
+          },
+          max_date_created: {
+            type: 'string',
+            description: 'Maximum date created for filtering (ISO 8601 format, e.g., 2023-12-31T23:59:59Z).'
+          },
+          min_date_modified: {
+            type: 'string',
+            description: 'Minimum date modified for filtering (ISO 8601 format, e.g., 2023-01-01T00:00:00Z).'
+          },
+          max_date_modified: {
+            type: 'string',
+            description: 'Maximum date modified for filtering (ISO 8601 format, e.g., 2023-12-31T23:59:59Z).'
+          },
+          channel_id: {
+            type: 'integer',
+            description: 'Filter orders by channel ID.'
+          },
+          payment_method: {
+            type: 'string',
+            description: 'Filter orders by payment method (e.g., credit_card, paypal, manual).'
+          },
+          cart_id: {
+            type: 'string',
+            description: 'Filter orders by cart ID.'
+          },
+          external_order_id: {
+            type: 'string',
+            description: 'Filter orders by external order ID.'
+          },
+          sort: {
+            type: 'string',
+            description: 'Sort field and direction (e.g., date_created:desc, id:asc, total:desc).'
           },
           limit: {
             type: 'integer',

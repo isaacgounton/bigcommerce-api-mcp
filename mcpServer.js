@@ -80,6 +80,42 @@ async function setupServerHandlers(server, tools) {
   });
 }
 
+// Authentication middleware
+function authenticateRequest(req, res, next) {
+  const authHeader = req.headers.authorization;
+  const expectedToken = process.env.MCP_AUTH_TOKEN;
+
+  // Skip auth if no token is configured
+  if (!expectedToken) {
+    return next();
+  }
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({
+      jsonrpc: "2.0",
+      error: {
+        code: -32001,
+        message: "Unauthorized: Missing or invalid authorization header"
+      },
+      id: null
+    });
+  }
+
+  const token = authHeader.substring(7);
+  if (token !== expectedToken) {
+    return res.status(401).json({
+      jsonrpc: "2.0",
+      error: {
+        code: -32001,
+        message: "Unauthorized: Invalid token"
+      },
+      id: null
+    });
+  }
+
+  next();
+}
+
 async function setupStreamableHttp(tools) {
   const app = express();
   app.use(express.json());
@@ -88,7 +124,7 @@ async function setupStreamableHttp(tools) {
     res.status(200).json({ status: 'healthy' });
   });
 
-  app.post("/mcp", async (req, res) => {
+  app.post("/mcp", authenticateRequest, async (req, res) => {
     try {
       const server = new Server(
         {
