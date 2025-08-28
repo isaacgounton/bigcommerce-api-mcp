@@ -39,3 +39,10 @@ Thumbs.db
 
 # Ignore kluster.ai Verify Code rules
 .github/instructions/kluster-code-verify.instructions.md
+.clunerules/
+.kilocode/
+.roo
+.claude/
+.augment/
+
+.cache_ggshield
