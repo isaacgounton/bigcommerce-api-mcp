@@ -84,6 +84,10 @@ async function setupStreamableHttp(tools) {
   const app = express();
   app.use(express.json());
 
+  app.get('/health', (req, res) => {
+    res.status(200).json({ status: 'healthy' });
+  });
+
   app.post("/mcp", async (req, res) => {
     try {
       const server = new Server(

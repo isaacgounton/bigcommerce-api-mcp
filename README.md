@@ -39,7 +39,7 @@ Create a `.env` file in the project root:
 
 ```env
 BIGCOMMERCE_STORE_HASH=your_store_hash_here
-BIGCOMMERCE_API_TOKEN=your_api_token_here
+BIGCOMMERCE_API_KEY=your_api_key_here
 ```
 
 **How to get your BigCommerce credentials:**
@@ -92,7 +92,7 @@ realpath mcpServer.js
       "args": ["/absolute/path/to/your/mcpServer.js"],
       "env": {
         "BIGCOMMERCE_STORE_HASH": "your_store_hash_here",
-        "BIGCOMMERCE_API_TOKEN": "your_api_token_here"
+        "BIGCOMMERCE_API_KEY": "your_api_key_here"
       }
     }
   }
@@ -117,7 +117,7 @@ realpath mcpServer.js
       "args": ["/absolute/path/to/mcpServer.js"],
       "env": {
         "BIGCOMMERCE_STORE_HASH": "your_store_hash_here", 
-        "BIGCOMMERCE_API_TOKEN": "your_api_token_here"
+        "BIGCOMMERCE_API_KEY": "your_api_key_here"
       }
     }
   }
@@ -132,7 +132,7 @@ For any MCP-compatible client, use these connection details:
 - **Args**: `["/path/to/mcpServer.js"]`
 - **Environment Variables**: 
   - `BIGCOMMERCE_STORE_HASH`
-  - `BIGCOMMERCE_API_TOKEN`
+  - `BIGCOMMERCE_API_KEY`
 
 ## 🐳 Docker Deployment
 
@@ -149,7 +149,7 @@ docker build -t bigcommerce-mcp .
 ```sh
 docker run -i --rm \
   -e BIGCOMMERCE_STORE_HASH=your_store_hash \
-  -e BIGCOMMERCE_API_TOKEN=your_token \
+  -e BIGCOMMERCE_API_KEY=your_api_key \
   bigcommerce-mcp
 ```
 
@@ -165,7 +165,7 @@ Update your Claude Desktop config to use Docker:
       "args": [
         "run", "-i", "--rm", 
         "-e", "BIGCOMMERCE_STORE_HASH=your_store_hash",
-        "-e", "BIGCOMMERCE_API_TOKEN=your_token", 
+        "-e", "BIGCOMMERCE_API_KEY=your_api_key", 
         "bigcommerce-mcp"
       ]
     }
@@ -184,7 +184,7 @@ services:
     build: .
     environment:
       - BIGCOMMERCE_STORE_HASH=${BIGCOMMERCE_STORE_HASH}
-      - BIGCOMMERCE_API_TOKEN=${BIGCOMMERCE_API_TOKEN}
+      - BIGCOMMERCE_API_KEY=${BIGCOMMERCE_API_KEY}
     restart: unless-stopped
 ```
 
@@ -242,7 +242,7 @@ All BigCommerce credentials can be provided via environment variables:
 
 ```bash
 export BIGCOMMERCE_STORE_HASH="your_store_hash"
-export BIGCOMMERCE_API_TOKEN="your_api_token" 
+export BIGCOMMERCE_API_KEY="your_api_key" 
 node mcpServer.js
 ```
 

@@ -6,4 +6,11 @@ RUN npm install
 
 COPY . .
 
-ENTRYPOINT ["node", "mcpServer.js"]
+# Install curl for health check
+RUN apk --no-cache add curl
+
+# Add health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:3001/health || exit 1
+
+ENTRYPOINT ["node", "mcpServer.js", "--streamable-http"]
