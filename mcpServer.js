@@ -130,7 +130,7 @@ async function setupStreamableHttp(tools) {
     }
   });
 
-  const port = process.env.PORT || 3001;
+  const port = process.env.PORT || 3000;
   app.listen(port, () => {
     console.log(
       `[Streamable HTTP Server] running at http://127.0.0.1:${port}/mcp`
@@ -183,7 +183,7 @@ async function setupSSE(tools) {
     }
   });
 
-  const port = process.env.PORT || 3001;
+  const port = process.env.PORT || 3000;
   app.listen(port, () => {
     console.log(`[SSE Server] is running:`);
     console.log(`  SSE stream:    http://127.0.0.1:${port}/sse`);
@@ -220,19 +220,39 @@ async function run() {
   const args = process.argv.slice(2);
   const isStreamableHttp = args.includes("--streamable-http");
   const isSSE = args.includes("--sse");
-  const tools = await discoverTools();
+  
+  try {
+    const tools = await discoverTools();
+    console.log(`[Server] Loaded ${tools.length} tools successfully`);
 
-  if (isStreamableHttp && isSSE) {
-    console.error("Error: Cannot specify both --streamable-http and --sse");
-    process.exit(1);
-  }
+    if (isStreamableHttp && isSSE) {
+      console.error("Error: Cannot specify both --streamable-http and --sse");
+      process.exit(1);
+    }
 
-  if (isStreamableHttp) {
-    await setupStreamableHttp(tools);
-  } else if (isSSE) {
-    await setupSSE(tools);
-  } else {
-    await setupStdio(tools);
+    if (isStreamableHttp) {
+      await setupStreamableHttp(tools);
+    } else if (isSSE) {
+      await setupSSE(tools);
+    } else {
+      await setupStdio(tools);
+    }
+  } catch (error) {
+    console.error("[Error] Failed to start server:", error.message);
+    
+    // If in HTTP mode, still start the server with an empty tools array for health checks
+    if (isStreamableHttp || isSSE) {
+      console.log("[Server] Starting with limited functionality due to initialization error");
+      const tools = [];
+      
+      if (isStreamableHttp) {
+        await setupStreamableHttp(tools);
+      } else if (isSSE) {
+        await setupSSE(tools);
+      }
+    } else {
+      process.exit(1);
+    }
   }
 }
 
