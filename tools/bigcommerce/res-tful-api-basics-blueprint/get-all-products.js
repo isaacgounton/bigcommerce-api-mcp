@@ -10,7 +10,7 @@ import dotenv from 'dotenv';
 // Load environment variables
 dotenv.config();
 
-const executeFunction = async ({ store_Hash }) => {
+const executeFunction = async ({ store_Hash } = {}) => {
   const baseUrl = 'https://api.bigcommerce.com/stores';
   const apiKey = process.env.BIGCOMMERCE_API_KEY;
 
@@ -60,16 +60,16 @@ const apiTool = {
     type: 'function',
     function: {
       name: 'get_all_products',
-      description: 'Get all products from the API.',
+      description: 'Get all products from the BigCommerce API. Store hash is automatically retrieved from environment variables.',
       parameters: {
         type: 'object',
         properties: {
           store_Hash: {
             type: 'string',
-            description: 'The store hash to be included in the URL.'
+            description: 'Optional store hash. If not provided, uses BIGCOMMERCE_STORE_HASH from environment variables.'
           }
         },
-        required: ['store_Hash']
+        required: []
       }
     }
   }

@@ -2,7 +2,7 @@
  * Function to get all orders from the BigCommerce API.
  *
  * @param {Object} args - Arguments for the request.
- * @param {string} args.store_Hash - The store hash to be included in the URL.
+ * @param {string} [args.store_Hash] - Optional store hash. If not provided, uses BIGCOMMERCE_STORE_HASH from environment.
  * @param {number} [args.customer_id] - Filter orders by specific customer ID.
  * @param {string} [args.email] - Filter orders by customer email.
  * @param {number} [args.status_id] - Filter orders by status ID.
@@ -28,13 +28,13 @@ import dotenv from 'dotenv';
 // Load environment variables
 dotenv.config();
 
-const executeFunction = async ({ 
-  store_Hash, 
-  customer_id, 
-  email, 
-  status_id, 
-  min_id, 
-  max_id, 
+const executeFunction = async ({
+  store_Hash,
+  customer_id,
+  email,
+  status_id,
+  min_id,
+  max_id,
   min_total,
   max_total,
   min_date_created,
@@ -46,19 +46,19 @@ const executeFunction = async ({
   cart_id,
   external_order_id,
   sort,
-  limit = 50, 
-  page = 1 
-}) => {
+  limit = 50,
+  page = 1
+} = {}) => {
   const baseUrl = 'https://api.bigcommerce.com/stores';
   const apiKey = process.env.BIGCOMMERCE_API_KEY;
 
   // Use provided store hash or default from environment
   const storeHash = store_Hash || process.env.BIGCOMMERCE_STORE_HASH;
-  
+
   try {
     // Build query parameters
     const queryParams = new URLSearchParams();
-    
+
     if (customer_id) queryParams.append('customer_id', customer_id.toString());
     if (email) queryParams.append('email', email);
     if (status_id) queryParams.append('status_id', status_id.toString());
@@ -77,7 +77,7 @@ const executeFunction = async ({
     if (sort) queryParams.append('sort', sort);
     if (limit) queryParams.append('limit', limit.toString());
     if (page) queryParams.append('page', page.toString());
-    
+
     // Construct the URL for the request
     const url = `${baseUrl}/${storeHash}/v2/orders${queryParams.toString() ? '?' + queryParams.toString() : ''}`;
 
@@ -121,13 +121,13 @@ const apiTool = {
     type: 'function',
     function: {
       name: 'get_all_orders',
-      description: 'Get all orders from the BigCommerce API. Can filter by customer_id to get products associated with specific customers through their order history.',
+      description: 'Get all orders from the BigCommerce API. Can filter by customer_id to get products associated with specific customers through their order history. Store hash is automatically retrieved from environment variables.',
       parameters: {
         type: 'object',
         properties: {
           store_Hash: {
             type: 'string',
-            description: 'The store hash to be included in the URL.'
+            description: 'Optional store hash. If not provided, uses BIGCOMMERCE_STORE_HASH from environment variables.'
           },
           customer_id: {
             type: 'integer',
@@ -202,7 +202,7 @@ const apiTool = {
             description: 'Page number to return (default: 1).'
           }
         },
-        required: ['store_Hash']
+        required: []
       }
     }
   }
