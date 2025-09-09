@@ -2,7 +2,7 @@
  * Function to get all products from the API.
  *
  * @param {Object} args - Arguments for the request.
- * @param {string} args.store_Hash - The store hash to be included in the URL.
+ * @param {string} [args.store_Hash] - Optional store hash. If not provided, uses BIGCOMMERCE_STORE_HASH from environment.
  * @returns {Promise<Object>} - The result of the API request.
  */
 import dotenv from 'dotenv';

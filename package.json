@@ -8,7 +8,8 @@
     "list-tools": "node index.js tools",
     "start": "node mcpServer.js",
     "start:http": "node mcpServer.js --streamable-http",
-    "start:sse": "node mcpServer.js --sse"
+    "start:sse": "node mcpServer.js --sse",
+    "test:agno": "node test-agno-compatibility.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.0",
@@ -19,7 +20,15 @@
   "engines": {
     "node": ">=16.0.0"
   },
-  "keywords": ["bigcommerce", "mcp", "api", "ecommerce", "orders", "products", "customers"],
+  "keywords": [
+    "bigcommerce",
+    "mcp",
+    "api",
+    "ecommerce",
+    "orders",
+    "products",
+    "customers"
+  ],
   "author": "Developer",
   "license": "MIT"
 }
