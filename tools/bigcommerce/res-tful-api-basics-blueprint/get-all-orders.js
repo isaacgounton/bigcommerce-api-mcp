@@ -96,13 +96,32 @@ const executeFunction = async ({
 
     // Check if the response was successful
     if (!response.ok) {
-      const errorData = await response.json();
+      let errorData;
+      try {
+        errorData = await response.json();
+      } catch (e) {
+        // If JSON parsing fails, use the text response
+        const errorText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
+      }
       throw new Error(JSON.stringify(errorData));
     }
 
+    // Get response text first to handle empty responses
+    const responseText = await response.text();
+
+    // Check if response is empty
+    if (!responseText || responseText.trim() === '') {
+      return { data: [], meta: { total: 0 } };
+    }
+
     // Parse and return the response data
-    const data = await response.json();
-    return data;
+    try {
+      const data = JSON.parse(responseText);
+      return data;
+    } catch (parseError) {
+      throw new Error(`Invalid JSON response: ${responseText.substring(0, 200)}...`);
+    }
   } catch (error) {
     console.error('Error getting all orders:', error);
     return {
