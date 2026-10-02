@@ -1,6 +1,6 @@
 {
   "name": "bigcommerce-api-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "BigCommerce API MCP server with tools for products, customers, and orders",
   "main": "index.js",
   "type": "module",
